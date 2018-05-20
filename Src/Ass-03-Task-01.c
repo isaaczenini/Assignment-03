@@ -43,6 +43,7 @@ void Ass_03_Task_01(void const * argument)
   	  osMessagePut (myQueue01Handle, (uint32_t)display.x, 0);
 
     sprintf(ts,"Task 1: %d",(int)loop);
+    //Hello
     osMutexWait(myMutex01Handle, osWaitForever);
     BSP_LCD_SetFont(&Font12);
     BSP_LCD_DisplayStringAt(5,190, ts, LEFT_MODE);

@@ -55,6 +55,8 @@ FIL SDFile;       /* File object for SD */
 
 /* USER CODE BEGIN Variables */
 
+#include "Ass-03.h"
+
 /* USER CODE END Variables */    
 
 void MX_FATFS_Init(void) 
@@ -64,6 +66,27 @@ void MX_FATFS_Init(void)
 
   /* USER CODE BEGIN Init */
   /* additional user code for init */     
+
+  // Check if SD card driver available
+  if(retSD != 0)
+  {
+    safe_printf("ERROR: SD card driver not available.");
+  }
+  else
+  {
+    safe_printf("SD card driver available.\n");
+
+    // Mount file system
+    if(f_mount(&SDFatFS, (TCHAR const *)SDPath, 0) != FR_OK)
+    {
+      safe_printf("ERROR: Could not mount file system.\n");
+    }
+    else
+    {
+      safe_printf("Mounted file system: %s\n", SDPath);
+    }
+  }
+
   /* USER CODE END Init */
 }
 

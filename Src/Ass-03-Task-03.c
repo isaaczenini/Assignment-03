@@ -1,101 +1,93 @@
-//     $Date: 2018-05-10 10:07:15 +1000 (Thu, 10 May 2018) $
-// $Revision: 1301 $
+//     $Date: 2018-05-20 20:36:44 +1000 (Sun, 20 May 2018) $
+// $Revision: 1325 $
 //   $Author: Peter $
 
 #include "Ass-03.h"
 
 //
-// REPLACE THE EXAMPLE CODE WITH YOUR CODE
+// Task that reads input from the front panel display. It uses a timer
+// to periodically signal the task to check if the touch panel is being
+// pressed. If it has, the position location is put onto a message queue.
+// Debouncing of the input is also done to ensure that multiple messages
+// are not generated.
 //
+// Function also provided to read from the message queue.
+//
+// *** MAKE UPDATES TO THE CODE AS REQUIRED ***
+//
+// Suggested update is to send a character that represents the button
+// being pressed rather than the position on the front panel. Can also improve
+// the setting of the DEBOUNCE_COUNT limit
 
-uint8_t myReadFile();
+// The number of times to register the front panel as being pressed
+#define ON_COUNT   1
+#define OFF_COUNT 20
 
-FATFS SDFatFs;
-FIL MyFile;
-FIL MyFile2, MyFile3;
-FRESULT Status;
-
-void Ass_03_Task_03(void const * argument)
+uint8_t getfp(Coordinate *display)
 {
-  FRESULT res;
-  FRESULT status;
-  uint8_t c; // [2];
-  uint8_t ReadFlag=1;
-  uint32_t loop=0;
-  uint8_t s[100];
+	osEvent event;
 
-  safe_printf("Hello from Task 3 (press any key)\n");
-
-  // Check if SD card driver available
-  if(retSD != 0)
-  {
-    safe_printf("ERROR: SD card driver not available.");
-    ReadFlag = 0;
-  }
-  else
-  {
-    safe_printf("SD card driver available.\n");
-
-    // Mount file system
-    if((res = f_mount(&SDFatFs, (TCHAR const *)SDPath, 0)) != FR_OK)
+	event = osMessageGet(myQueue01Handle, osWaitForever);
+    if (event.status == osEventMessage)
     {
-      safe_printf("ERROR: Could not mount file system.\n");
-      ReadFlag = 0;
+    	display->x = (uint16_t)(event.value.v >> 16);
+    	display->y = (uint16_t)(event.value.v);
+    	return 0;
     }
     else
     {
-      safe_printf("Mounted file system: %s\n", SDPath);
+    	return 1;
     }
-  }
-
-  while (1)
-  {
-	  c = getchar();
-      sprintf(s,"Task 3: %d (got '%c')",loop,c);
-      osMutexWait(myMutex01Handle, osWaitForever);
-      BSP_LCD_DisplayStringAt(5,220, s, LEFT_MODE);
-      osMutexRelease(myMutex01Handle);
-      HAL_GPIO_TogglePin(GPIOD, LD3_Pin); // Toggle LED3
-      loop++;
-
-      safe_printf("%s",s);
-      sprintf(s,"\nRead file from SD card...\n"); // Test over writing string
-      safe_printf("\n");
-
-      myReadFile();
-  }
 }
 
-uint8_t myReadFile()
+void Ass_03_Task_03(void const * argument)
 {
-  FRESULT res;
-  uint32_t bytesread;
-#define BUFF_SIZE 256
-  uint8_t rtext[BUFF_SIZE];
+	int8_t pressed_count=ON_COUNT;  // Debounce counter (not pressed)
+	uint16_t pressed_num=0;         // Number of times a key is pressed
+	Coordinate display;             // Pressed location
 
-  // Open file Hello.txt
-  if((res = f_open(&MyFile, "Hello.txt", FA_READ)) != FR_OK)
-  {
-    safe_printf("ERROR: Opening 'Hello.txt'\n");
-    return 1;
-  }
-  safe_printf("Task 3: Opened file 'Hello.txt'\n");
+	osSignalWait(1,osWaitForever);
+	safe_printf("Hello from Task 3 (Front Panel)\n");
 
-  // Read data from file
-  if ((res = f_read(&MyFile, rtext, BUFF_SIZE-1, &bytesread)) != FR_OK)
-  {
-    safe_printf("ERROR: Reading 'Hello.txt'\n");
-    f_close(&MyFile);
-    return 1;
-  }
-  rtext[bytesread] = '\0';
-  safe_printf("Task 3: Read: %s\n", rtext);
-
-  // Close file
-  f_close(&MyFile);
-
-  // Unmount file system
-  // FATFS_UnLinkDriver(SD_Path);
-
-  return 0;
+	while (1)
+	{
+		if (BSP_TP_GetDisplayPoint(&display) != 0)
+		{
+			// Not pressed: reset debounce counter
+			if (pressed_count < 0)
+			{
+				pressed_count++;
+				if (pressed_count == 0)
+				{
+					pressed_count = ON_COUNT;
+				}
+			}
+			else
+			{
+				pressed_count = ON_COUNT;
+			}
+		}
+		else
+		{
+			// Pressed: count down debounce unless already expired
+			if (pressed_count > 0)
+			{
+				pressed_count--;
+				if (pressed_count == 0)
+				{
+					// Debounced: queue key pressed message
+					pressed_num++;
+					safe_printf("Task 3: %d (touch %3d,%3d)\n", pressed_num, display.x, display.y);
+					osMessagePut (myQueue01Handle, (uint32_t)((display.x << 16) + display.y), 0);
+					pressed_count = -OFF_COUNT;
+				}
+			}
+			else
+			{
+				pressed_count = -OFF_COUNT;
+			}
+		}
+		// Wait before checking key pressed again
+		osSemaphoreWait(myBinarySem04Handle, osWaitForever);
+	}
 }

@@ -1,5 +1,5 @@
-//     $Date: 2018-05-10 10:07:15 +1000 (Thu, 10 May 2018) $
-// $Revision: 1301 $
+//     $Date: 2018-05-21 09:11:26 +1000 (Mon, 21 May 2018) $
+// $Revision: 1327 $
 //   $Author: Peter $
 
 // Assignment 3 include file
@@ -17,6 +17,7 @@
 #include "touch_panel.h"
 #include "openx07v_c_lcd.h"
 #include "fatfs.h"
+#include "adc.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -28,10 +29,15 @@
 extern osThreadId defaultTaskHandle;
 extern osThreadId myTask02Handle;
 extern osThreadId myTask03Handle;
+extern osThreadId myTask04Handle;
 extern osTimerId myTimer01Handle;
 
 extern osSemaphoreId myBinarySem01Handle;
 extern osSemaphoreId myBinarySem02Handle;
+extern osSemaphoreId myBinarySem03Handle;
+extern osSemaphoreId myBinarySem04Handle;
+extern osSemaphoreId myBinarySem05Handle;
+extern osSemaphoreId myBinarySem06Handle;
 extern osMessageQId myQueue01Handle;
 extern osMutexId myMutex01Handle; // Protect LCD
 extern osMutexId myMutex02Handle; // Protect console output
@@ -40,10 +46,14 @@ extern osMutexId myMutex02Handle; // Protect console output
 extern void Ass_03_Task_01(void const *argument);
 extern void Ass_03_Task_02(void const *argument);
 extern void Ass_03_Task_03(void const *argument);
+extern void Ass_03_Task_04(void const *argument);
 
 // Library functions
 extern uint8_t BSP_TP_Init(void);
 extern uint8_t BSP_TP_GetDisplayPoint(Coordinate *pDisplay);
+
+// Front panel input
+extern uint8_t getfp(Coordinate *display);
 
 // STEPIEN: Safe printf() to ensure that only one task can write to
 //          the console at a time

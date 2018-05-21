@@ -6,4 +6,6 @@
 
 //
 // PLACE YOUR COMMON CODE HERE
+
+printf("Hello");
 //

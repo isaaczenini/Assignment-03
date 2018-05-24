@@ -223,14 +223,6 @@ static uint16_t count=0;
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-  // STEPIEN
-  if (htim->Instance == TIM2)
-  {
-		HAL_GPIO_WritePin(GPIOD, LD3_Pin, GPIO_PIN_SET);
-		count++;
-		HAL_GPIO_WritePin(GPIOD, LD3_Pin, GPIO_PIN_RESET);
-  }
-
   /* USER CODE END Callback 1 */
 }
 

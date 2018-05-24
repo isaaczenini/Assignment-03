@@ -1,5 +1,5 @@
-//     $Date: 2018-05-21 09:11:26 +1000 (Mon, 21 May 2018) $
-// $Revision: 1327 $
+//     $Date: 2018-05-22 06:24:02 +1000 (Tue, 22 May 2018) $
+// $Revision: 1330 $
 //   $Author: Peter $
 
 #include "Ass-03.h"
@@ -27,7 +27,7 @@ void Ass_03_Task_02(void const * argument)
 	Coordinate display;
 
 	osSignalWait(1,osWaitForever);
-	safe_printf("Hello from Task 2 (Pulse Rate Application)\n");
+	safe_printf("Hello from Task 2 - Pulse Rate Application (touch screen input)\n");
 
 while (1)
 {
@@ -39,8 +39,8 @@ while (1)
 			osMutexWait(myMutex01Handle, osWaitForever);
 			BSP_LCD_FillCircle(display.x, display.y, 2);
 			osMutexRelease(myMutex01Handle);
-			safe_printf("Task 2: %d (touch %3d,%3d)\n", loop, display.x, display.y);
 			loop++;
+			safe_printf("Task 2: %d (got  %3d,%3d)\n", loop, display.x, display.y);
 		}
     }
 }

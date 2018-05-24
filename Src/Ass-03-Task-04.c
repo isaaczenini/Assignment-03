@@ -1,5 +1,5 @@
-//     $Date: 2018-05-21 09:11:26 +1000 (Mon, 21 May 2018) $
-// $Revision: 1327 $
+//     $Date: 2018-05-22 06:24:02 +1000 (Tue, 22 May 2018) $
+// $Revision: 1330 $
 //   $Author: Peter $
 
 #include "Ass-03.h"
@@ -30,7 +30,7 @@ void Ass_03_Task_04(void const * argument)
 #define YSIZE 150
 
   osSignalWait(1,osWaitForever);
-  safe_printf("Hello from Task 4 (turn ADC knob or use pulse sensor)\n");
+  safe_printf("Hello from Task 4 - Analog Input (turn ADC knob or use pulse sensor)\n");
 
   // Draw a box to plot in
   osMutexWait(myMutex01Handle, osWaitForever);

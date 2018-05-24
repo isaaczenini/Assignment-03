@@ -1,5 +1,5 @@
-//     $Date: 2018-05-21 09:11:26 +1000 (Mon, 21 May 2018) $
-// $Revision: 1327 $
+//     $Date: 2018-05-22 06:24:02 +1000 (Tue, 22 May 2018) $
+// $Revision: 1330 $
 //   $Author: Peter $
 //
 // STEPIEN: Modified to be interrupt driven and feed result into a message queue.

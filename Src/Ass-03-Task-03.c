@@ -1,5 +1,5 @@
-//     $Date: 2018-05-20 20:36:44 +1000 (Sun, 20 May 2018) $
-// $Revision: 1325 $
+//     $Date: 2018-05-22 06:24:02 +1000 (Tue, 22 May 2018) $
+// $Revision: 1330 $
 //   $Author: Peter $
 
 #include "Ass-03.h"
@@ -47,7 +47,7 @@ void Ass_03_Task_03(void const * argument)
 	Coordinate display;             // Pressed location
 
 	osSignalWait(1,osWaitForever);
-	safe_printf("Hello from Task 3 (Front Panel)\n");
+	safe_printf("Hello from Task 3 - Front Panel (detects touch screen presses)\n");
 
 	while (1)
 	{
@@ -77,7 +77,7 @@ void Ass_03_Task_03(void const * argument)
 				{
 					// Debounced: queue key pressed message
 					pressed_num++;
-					safe_printf("Task 3: %d (touch %3d,%3d)\n", pressed_num, display.x, display.y);
+					safe_printf("Task 3: %d (sent %3d,%3d)\n", pressed_num, display.x, display.y);
 					osMessagePut (myQueue01Handle, (uint32_t)((display.x << 16) + display.y), 0);
 					pressed_count = -OFF_COUNT;
 				}
